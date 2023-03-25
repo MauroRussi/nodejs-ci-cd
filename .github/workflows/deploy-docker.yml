@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
+  
+env:
+  CONTAINER_RELEASE_IMAGE: ${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest
     
 jobs:
   push_to_registry:
@@ -30,7 +33,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest
+          tags: $CONTAINER_RELEASE_IMAGE
 
   local_run:
     name: Pull the image and run in local docker
@@ -38,14 +41,14 @@ jobs:
     runs-on: self-hosted    
     steps:
       - name: Delete previous containers
-        run: docker ps -aq --filter ancestor=${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest | xargs docker rm -f;
+        run: docker ps -aq --filter ancestor=$CONTAINER_RELEASE_IMAGE | xargs docker rm -f;
 
       - name: Delete previous images
-        run: docker images -q ${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest | xargs docker rmi;
+        run: docker images -q $CONTAINER_RELEASE_IMAGE | xargs docker rmi;
 
       - name: Local pull
-        run: docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest
+        run: docker pull $CONTAINER_RELEASE_IMAGE
 
       - name: Local run
-        run: docker run -d -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest
+        run: docker run -d -p 3000:3000 $CONTAINER_RELEASE_IMAGE
           
