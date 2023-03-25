@@ -33,7 +33,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: $CONTAINER_RELEASE_IMAGE
+          tags: ${{ env.CONTAINER_RELEASE_IMAGE }}
 
   local_run:
     name: Pull the image and run in local docker
@@ -41,14 +41,14 @@ jobs:
     runs-on: self-hosted    
     steps:
       - name: Delete previous containers
-        run: docker ps -aq --filter ancestor=$CONTAINER_RELEASE_IMAGE | xargs docker rm -f;
+        run: docker ps -aq --filter ancestor=${{ env.CONTAINER_RELEASE_IMAGE }} | xargs docker rm -f;
 
       - name: Delete previous images
-        run: docker images -q $CONTAINER_RELEASE_IMAGE | xargs docker rmi;
+        run: docker images -q ${{ env.CONTAINER_RELEASE_IMAGE }} | xargs docker rmi;
 
       - name: Local pull
-        run: docker pull $CONTAINER_RELEASE_IMAGE
+        run: docker pull ${{ env.CONTAINER_RELEASE_IMAGE }}
 
       - name: Local run
-        run: docker run -d -p 3000:3000 $CONTAINER_RELEASE_IMAGE
+        run: docker run -d -p 3000:3000 ${{ env.CONTAINER_RELEASE_IMAGE }}
           
