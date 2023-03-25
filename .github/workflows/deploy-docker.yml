@@ -37,6 +37,12 @@ jobs:
     needs: push_to_registry
     runs-on: self-hosted    
     steps:
+      - name: Delete previous containers
+        run: docker ps -aq --filter ancestor=${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest | xargs docker rm -f;
+
+      - name: Delete previous images
+        run: docker images -q ${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest | xargs docker rmi;
+
       - name: Local pull
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest
 
