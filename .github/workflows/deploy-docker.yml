@@ -31,3 +31,17 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest
+
+  local_run:
+    name: Pull the image and run in local docker
+    needs: push_to_registry
+    runs-on: self-hosted    
+    steps:
+      - name: Local pull
+        uses: |
+          docker pull ${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest
+
+      - name: Local run
+        uses: |
+          docker run -d -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/nodejs-ci-cd:latest
+          
